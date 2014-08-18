@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    
+    <body>
+        
+        <script>
+         function prueba(ans){   
+            $.ajax({
+            type: "GET",
+            url: "evaluateAnswer.php",
+            data: {"ans" : ans},
+            success: function(msg) {
+            alert(msg);
+      }
+         });
+     }
+        </script>
+        <div><input type="button" value="Pruebame" onclick="prueba(34)"></div>
+    </body>
+</html>

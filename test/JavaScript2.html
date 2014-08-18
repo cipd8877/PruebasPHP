@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script>
+            function displayQuestion(str) {
+                if (str == "") {
+                    docshowCDument.getElementById("textQuestion").innerHTML = "";
+                    return;
+                }
+                if (window.XMLHttpRequest) {
+                    // code for IE7+, Firefox, Chrome, Opera, Safari
+                    xmlhttp = new XMLHttpRequest();
+                } else {  // code for IE6, IE5
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                        document.getElementById("textQuestion").innerHTML = xmlhttp.responseText;
+                    }
+                }
+                xmlhttp.open("GET", "getQuestion.php?q=" + str, true);
+                xmlhttp.send();
+            }
+        </script>
+    </head>
+    <body>
+
+        <form id="loadconfigform">
+            Dato: <input type="text" name="tipo" />
+            <input type="button" value="Envia" onclick="displayQuestion(document.getElementsByName('tipo')[0].value)" />
+        </form>
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+        <div>5</div>
+        <div id="textQuestion"><b>CD info will be listed here...</b></div>
+    </body>
+</html>

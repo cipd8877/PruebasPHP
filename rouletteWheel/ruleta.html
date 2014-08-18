@@ -1,0 +1,182 @@
+<html>
+    <head>
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <title>Ruleta</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+
+    <body>
+        <input type="button" value="Girar" onclick="girar();" style="float: left;" />
+        <canvas id="wheelcanvas" width="500" height="500"></canvas>
+        <script type="application/javascript">
+          var verdeSeco = "#B8D430";
+          var verdeBandera = "#3AB745";
+          var verdeAgua = "#029990";
+          var azul = "#3501CB";
+          var azulMarino = "#2E2C75";
+          var morado = "#673A7E";
+          var violeta = "#CC0071";
+          var rojo = "#F80120";
+          var melon = "#F35B20";
+          var naranja = "#FB9A00";
+          var amarilloFuerte = "#FFCC00";
+          var amarillo = "#FEF200";
+          var colores = [ verdeSeco, verdeBandera, verdeAgua, azul,
+                          azulMarino];
+          var divisiones = ["Arte", "Geografia", "Deportes", "Historia",
+                             "Ciencia"];
+  
+          var anguloInicial = 0;
+          var separaciones = divisiones.length;
+          var separacionesXPI = (separaciones/2);
+          var arco = Math.PI / separacionesXPI;
+          var spinTimeout = null;
+  
+          var spinArcStart = 10;
+          var tiempoGiro = 0;
+          var tiempoGiroTotal = 0;
+  
+          var circulo;
+          function dibujar() {
+            dibujarRuleta();
+          }
+  
+          function dibujarRuleta() {
+            var canvas = document.getElementById("wheelcanvas");
+            if (canvas.getContext) {
+              var radioCirculoExterno = 200;
+              var radioCirculoTexto = 160;
+              var radioCirculoInterior = 61;
+              var angulo = 0;
+              var iterador = 0
+              var colorFlecha = "black";
+              var colorLetra = "black";
+              var colorContornoCirculo = "black";
+              var sombreadoLetra = "white";
+              var textoDivision = null;
+              var suma = 0;
+              circulo = canvas.getContext("2d");
+              circulo.clearRect(0,0,500,500);
+
+              circulo.strokeStyle = colorContornoCirculo;
+              circulo.lineWidth = 2;
+      
+              circulo.font = 'bold 12px sans-serif';
+              for(iterador; iterador < separaciones; iterador++) {
+                angulo = anguloInicial + iterador * arco;
+                circulo.fillStyle = colores[iterador];
+        
+                circulo.beginPath();
+                circulo.arc(250, 250, radioCirculoExterno, angulo, angulo + arco, false);
+                circulo.arc(250, 250, radioCirculoInterior, angulo + arco, angulo, true);
+                circulo.stroke();
+                circulo.fill();
+                circulo.save();
+                //Texto dentro de la ruleta
+                circulo.shadowOffsetX = -1;
+                circulo.shadowOffsetY = -1;
+                circulo.shadowBlur    = 0;
+                circulo.shadowColor   = sombreadoLetra;
+                circulo.fillStyle = colorLetra;
+                circulo.translate(250 + Math.cos(angulo + arco / 2) * radioCirculoTexto, 250 + Math.sin(angulo + arco / 2) * radioCirculoTexto);
+                circulo.rotate(angulo + arco / 2 + Math.PI / 2);
+                textoDivision = divisiones[iterador];
+                circulo.fillText(textoDivision, -circulo.measureText(textoDivision).width / 2, 0);
+                circulo.restore();
+              } 
+      
+              //Dibujar flecha
+              circulo.fillStyle = colorFlecha;
+              circulo.beginPath();
+              circulo.moveTo(250 - 4, 250 - (radioCirculoExterno + 5));
+              circulo.lineTo(250 + 4, 250 - (radioCirculoExterno + 5));
+              circulo.lineTo(250 + 4, 250 - (radioCirculoExterno - 5));
+              circulo.lineTo(250 + 9, 250 - (radioCirculoExterno - 5));
+              circulo.lineTo(250 + 0, 250 - (radioCirculoExterno - 13));
+              circulo.lineTo(250 - 9, 250 - (radioCirculoExterno - 5));
+              circulo.lineTo(250 - 4, 250 - (radioCirculoExterno - 5));
+              circulo.lineTo(250 - 4, 250 - (radioCirculoExterno + 5));
+              circulo.fill();
+            }
+          }
+  
+          function girar() {
+            anguloInicialGiro = Math.random() * 10 + 10;
+            tiempoGiro = 0;
+            tiempoGIroTotal = Math.random() * 3 + 4 * 1000;
+            girarRuleta();
+          }
+  
+          function girarRuleta() {
+            tiempoGiro += 30;
+            if(tiempoGiro >= tiempoGIroTotal) {
+              detenerGiroRuleta();
+              return;
+            }
+            var anguloGiro = anguloInicialGiro - easeOut(tiempoGiro, 0, anguloInicialGiro, tiempoGIroTotal);
+            anguloInicial += (anguloGiro * Math.PI / 180);
+            dibujarRuleta();
+            tiempoSalidaGiro = setTimeout('girarRuleta()', 30);
+          }
+  
+          function detenerGiroRuleta() {
+            clearTimeout(tiempoSalidaGiro);
+            var questionType =0;
+            var grados = anguloInicial * 180 / Math.PI + 90;
+            var arcdiametro = arco * 180 / Math.PI;
+            var index = Math.floor((360 - grados % 360) / arcdiametro);
+            var textoDivision = null;
+            circulo.save();
+            circulo.font = 'bold 20px sans-serif';
+            questionType = index+1;
+            textoDivision = divisiones[index];
+            displayQuestion(questionType);
+            circulo.fillText(textoDivision, 250 - circulo.measureText(textoDivision).width / 2, 250 + 10);
+            circulo.restore();
+          }
+  
+          function easeOut(t, b, c, d) {
+            var ts = (t/=d)*t;
+            var tc = ts*t;
+            return b+c*(tc + -3*ts + 3*t);
+          }
+  
+          function displayQuestion(str) {
+              if (window.XMLHttpRequest) {
+                  // code for IE7+, Firefox, Chrome, Opera, Safari
+                  xmlhttp = new XMLHttpRequest();
+              } else {  // code for IE6, IE5
+                  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+              }
+              xmlhttp.onreadystatechange = function() {
+                  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                      document.getElementById("textQuestion").innerHTML = xmlhttp.responseText;
+                  }
+              }
+              xmlhttp.open("GET", "getQuestion.php?q=" + str, true);
+              xmlhttp.send();
+          }
+          dibujar();
+          
+          function evaluateAnswer(answer){
+              $.ajax({
+                  type: "GET",
+                  url: "evaluateAnswer.php",
+                  data: {"ans" : answer},
+                  success: function(msg) {
+                      alert(msg);
+                      location.reload();
+                  }
+              });
+          }
+        </script>
+        <div> </div>
+        <div> </div>
+        <div> </div>
+        <div> </div>
+        <div> </div>
+        <div id="textQuestion"><b>Tu pregunta es:</b></div>
+    </body>  
+</html> 

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <canvas id="marco" width="300" height="150" style="border:1px solid #d3d3d3;">
+            El navegador no soporta la etiqueta canvas de HTML5</canvas>
+        <script>
+            var marco = document.getElementById("marco");
+            var circulo = marco.getContext("2d");
+            var inicial = 2 * Math.PI;
+            circulo.beginPath();
+            var angulo = 0;
+            var numeroSeparaciones = 11;
+            var separacionesPorMitad = numeroSeparaciones / 2;
+            var arco = Math.PI / separacionesPorMitad;
+            var anguloinicial = 0;
+            var suma = 0;
+            var sentidoReloj = true;
+            var posicionRadioX = 100;
+            var posicionRadioY = 75;
+            var radio = 50;
+            for (var iterador = 0; iterador < numeroSeparaciones; iterador++) {
+                angulo = anguloinicial + iterador * arco;
+                suma = angulo + arco;
+                circulo.arc(posicionRadioX, posicionRadioY, radio, angulo, suma, sentidoReloj);
+            }
+            circulo.stroke();
+        </script> 
+
+    </body>
+</html>
